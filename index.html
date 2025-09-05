@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Ürün Girişi · CSV</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header" id="appHeader">
+    <h1>Ürün Girişi</h1>
+    <div class="totals">
+      <span>Toplam:</span>
+      <strong id="grandTotal">0</strong>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="toolbar">
+      <div class="left">
+        <button id="addRowBtn" class="btn primary">Satır Ekle</button>
+        <button id="add10Btn" class="btn">+10 Satır</button>
+        <button id="clearBtn" class="btn danger">Temizle</button>
+      </div>
+      <div class="right">
+        <input id="csvFile" type="file" accept=".csv" class="file" />
+        <button id="downloadBtn" class="btn success">CSV İndir</button>
+      </div>
+    </div>
+
+    <div class="scroll-wrap" id="scrollWrap">
+      <div class="table-head grid" id="tableHead">
+        <div>AD</div>
+        <div>Adet</div>
+        <div>Koli</div>
+        <div>Gr/L</div>
+        <div>Fiyat</div>
+        <div>Tutar</div>
+        <div></div>
+      </div>
+
+      <div id="rows" class="rows" aria-live="polite"></div>
+    </div>
+
+    <footer class="footer">
+      <button id="addRowBottom" class="btn primary">Satır Ekle</button>
+    </footer>
+  </main>
+
+  <template id="rowTemplate">
+    <div class="row grid">
+      <input class="cell name" data-field="ad" placeholder="Ürün adı" enterkeyhint="next" autocomplete="off" tabindex="0"/>
+      <input class="cell num" data-field="adet" type="text" inputmode="text" placeholder="0" enterkeyhint="next" autocomplete="off" tabindex="0"/>
+      <input class="cell num" data-field="koli" type="text" inputmode="text" placeholder="1" enterkeyhint="next" autocomplete="off" tabindex="0"/>
+      <input class="cell" data-field="grl" placeholder="500g / 1L" enterkeyhint="next" autocomplete="off" tabindex="0"/>
+      <input class="cell num" data-field="fiyat" type="text" inputmode="text" placeholder="0.00" enterkeyhint="next" autocomplete="off" tabindex="0"/>
+      <input class="cell num readonly" data-field="tutar" type="text" readonly tabindex="-1" />
+      <button class="btn icon danger remove" title="Satırı sil" tabindex="0">✕</button>
+    </div>
+  </template>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
