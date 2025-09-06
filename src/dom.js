@@ -15,6 +15,15 @@ function attachKeyNav(row){
         focusNext(el);
       }
     });
+    
+    // 0 değeri olan alanlara tıklandığında tüm metni seç
+    el.addEventListener('focus', (ev)=>{
+      if(el.value === '0' || el.value === '0.00'){
+        setTimeout(() => {
+          el.select();
+        }, 0);
+      }
+    });
   });
 }
 
