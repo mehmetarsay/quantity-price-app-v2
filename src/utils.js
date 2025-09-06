@@ -23,10 +23,10 @@ export function focusNext(fromEl){
         // Bir alt satırı bul
         const nextRow = currentRow.nextElementSibling;
         if (nextRow) {
-          // Alt satırın AD alanına odaklan
-          const nextRowAd = nextRow.querySelector('[data-field="ad"]');
-          if (nextRowAd) {
-            nextRowAd.focus();
+          // Alt satırın fiyat alanına odaklan
+          const nextRowFiyat = nextRow.querySelector('[data-field="fiyat"]');
+          if (nextRowFiyat) {
+            nextRowFiyat.focus();
             return;
           }
         } else {
@@ -36,9 +36,9 @@ export function focusNext(fromEl){
             setTimeout(() => {
               const newRow = document.querySelector('#rows .row:last-child');
               if (newRow) {
-                const firstInput = newRow.querySelector('[data-field="ad"]');
-                if (firstInput) {
-                  firstInput.focus();
+                const fiyatInput = newRow.querySelector('[data-field="fiyat"]');
+                if (fiyatInput) {
+                  fiyatInput.focus();
                 }
               }
             }, 0);

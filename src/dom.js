@@ -10,7 +10,7 @@ function attachKeyNav(row){
     if(el.readOnly) return;
     
     el.addEventListener('keydown', (ev)=>{
-      if(ev.key === 'Enter'){
+      if(ev.key === 'Enter' || ev.key === 'Tab'){
         ev.preventDefault();
         focusNext(el);
       }
