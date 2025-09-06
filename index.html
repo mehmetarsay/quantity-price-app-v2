@@ -9,13 +9,16 @@
 <body>
   <header class="app-header" id="appHeader">
     <h1>Ürün Girişi</h1>
-    <div class="totals">
-      <span>Ürün Sayısı:</span>
-      <strong id="productCount">0</strong>
-      <span>Toplam:</span>
-      <strong id="grandTotal">0</strong>
-    </div>
   </header>
+  
+  <!-- Fixed Totals -->
+  <div class="totals">
+    <span>Ürün Sayısı:</span>
+    <strong id="productCount">0</strong>
+    <span>Toplam:</span>
+    <strong id="grandTotal">0</strong>
+    <span class="currency">TL</span>
+  </div>
 
   <main class="container">
     <div class="toolbar">
@@ -25,7 +28,7 @@
         <button id="clearBtn" class="btn danger">Temizle</button>
       </div>
       <div class="right">
-        <input id="csvFile" type="file" accept=".csv" class="file" />
+        <input id="csvFile" type="file" accept=".csv" class="file" multiple />
         <button id="downloadBtn" class="btn success">CSV İndir</button>
       </div>
     </div>
@@ -62,6 +65,28 @@
       <button class="btn icon danger remove" title="Satırı sil" tabindex="0">✕</button>
     </div>
   </template>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+      <div class="loading-spinner-large"></div>
+      <div class="loading-info">
+        <h3>Dosyalar İçe Aktarılıyor</h3>
+        <div class="file-counter">
+          <span id="fileCounter">1/1</span>
+        </div>
+        <div class="current-file">
+          <span id="currentFileName">Dosya yükleniyor...</span>
+        </div>
+        <div class="progress-bar-large">
+          <div id="progressFillLarge" class="progress-fill-large"></div>
+        </div>
+        <div class="progress-text-large">
+          <span id="progressTextLarge">İşleniyor...</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="src/main.js"></script>
 </body>
