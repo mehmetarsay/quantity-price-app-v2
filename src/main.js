@@ -1,6 +1,6 @@
 import { toCSV, parseCSV } from './csv.js';
 import { save, load } from './state.js';
-import { addRow, clearAll, collectRows, updateGrandTotal } from './dom.js';
+import { addRow, clearAll, collectRows, updateGrandTotal, updateProductCount, updateRowNumbers, moveEmptyRowsToBottom } from './dom.js';
 
 const addRowBtn = document.getElementById('addRowBtn');
 const add10Btn = document.getElementById('add10Btn');
@@ -68,10 +68,13 @@ function importCSV(e){
     try{
       const rows = parseCSV(String(reader.result||''));
       if(!rows.length){ alert('CSV boş veya hatalı.'); return; }
-      clearAll();
+      // Mevcut ürünlerin devamına ekle (clearAll() çağırmıyoruz)
       rows.forEach(r => addRow(r));
+      // Boş satırları en aşağıya taşı
+      moveEmptyRowsToBottom();
       persist();
       updateGrandTotal();
+      updateProductCount();
       updateStickyOffsets();
     }catch(err){
       console.error(err);
@@ -88,5 +91,7 @@ function importCSV(e){
     addRow();
   }
   updateGrandTotal();
+  updateProductCount();
+  updateRowNumbers();
   updateStickyOffsets();
 })();

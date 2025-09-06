@@ -3,6 +3,7 @@ import { safeNum, fmt, focusNext } from './utils.js';
 const rowsEl = document.getElementById('rows');
 const tmpl = document.getElementById('rowTemplate');
 const grandTotalEl = document.getElementById('grandTotal');
+const productCountEl = document.getElementById('productCount');
 
 function attachKeyNav(row){
   row.querySelectorAll('input.cell').forEach((el)=>{
@@ -32,6 +33,8 @@ export function addRow(initial){
   row.querySelector('.remove').addEventListener('click', ()=>{
     row.remove();
     updateGrandTotal();
+    updateProductCount();
+    moveEmptyRowsToBottom();
   });
 
   rowsEl.appendChild(node);
@@ -40,6 +43,11 @@ export function addRow(initial){
   if(initial) setInputs(inserted, initial);
   updateRowTotal(inserted);
   updateGrandTotal();
+  updateProductCount();
+  // Eğer yeni eklenen satır dolu ise boş satırları en aşağıya taşı
+  if(initial && (initial.ad || initial.adet || initial.koli || initial.grl || initial.fiyat)) {
+    moveEmptyRowsToBottom();
+  }
 
   const f = inserted.querySelector('[data-field="ad"]');
   f && f.focus();
@@ -55,6 +63,8 @@ export function addRow(initial){
 export function clearAll(){
   rowsEl.innerHTML = '';
   updateGrandTotal();
+  updateProductCount();
+  updateRowNumbers();
 }
 
 export function getInputs(row){
@@ -109,4 +119,59 @@ export function collectRows(){
 export function updateGrandTotal(){
   const sum = collectRows().reduce((acc,r)=> acc + (r.tutar||0), 0);
   grandTotalEl.textContent = fmt(sum);
+}
+
+export function updateProductCount(){
+  // Sadece dolu satırları say (en az bir alanı dolu olan)
+  const rows = rowsEl.querySelectorAll('.row');
+  let count = 0;
+  rows.forEach(row => {
+    const inputs = getInputs(row);
+    const hasData = inputs.ad.value.trim() || 
+                   inputs.adet.value.trim() || 
+                   inputs.koli.value.trim() || 
+                   inputs.grl.value.trim() || 
+                   inputs.fiyat.value.trim();
+    if (hasData) count++;
+  });
+  productCountEl.textContent = count;
+}
+
+export function updateRowNumbers(){
+  const rows = rowsEl.querySelectorAll('.row');
+  rows.forEach((row, index) => {
+    const numberCell = row.querySelector('.row-number');
+    if (numberCell) {
+      numberCell.textContent = index + 1;
+    }
+  });
+}
+
+export function moveEmptyRowsToBottom(){
+  const rows = Array.from(rowsEl.querySelectorAll('.row'));
+  const filledRows = [];
+  const emptyRows = [];
+  
+  rows.forEach(row => {
+    const inputs = getInputs(row);
+    const hasData = inputs.ad.value.trim() || 
+                   inputs.adet.value.trim() || 
+                   inputs.koli.value.trim() || 
+                   inputs.grl.value.trim() || 
+                   inputs.fiyat.value.trim();
+    
+    if (hasData) {
+      filledRows.push(row);
+    } else {
+      emptyRows.push(row);
+    }
+  });
+  
+  // Önce dolu satırları, sonra boş satırları ekle
+  rowsEl.innerHTML = '';
+  filledRows.forEach(row => rowsEl.appendChild(row));
+  emptyRows.forEach(row => rowsEl.appendChild(row));
+  
+  // Satır numaralarını güncelle
+  updateRowNumbers();
 }

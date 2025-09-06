@@ -32,6 +32,7 @@ body{
 .app-header h1{margin:0; font-size:18px}
 .app-header .totals{display:flex; gap:8px; align-items:baseline}
 #grandTotal{font-size:20px}
+#productCount{font-size:18px; color:var(--accent)}
 
 .container{max-width:1200px; margin:20px auto; padding:0 12px}
 .toolbar{
@@ -70,7 +71,7 @@ body{
 /* Grid: wide columns + min width enables horizontal scroll on mobile */
 .grid{
   display:grid;
-  grid-template-columns: 2.8fr 1.1fr 1.1fr 1.2fr 1.3fr 1.4fr 48px;
+  grid-template-columns: 60px 2.8fr 1.1fr 1.1fr 1.2fr 1.3fr 1.4fr 48px;
   gap:10px;
   align-items:center;
   min-width: 1000px;
@@ -113,6 +114,14 @@ body{
 .cell::placeholder{color:#6b7280}
 .cell.num{text-align:right}
 .cell.readonly{opacity:0.85; background:#0b1228}
+.cell.row-number{
+  text-align:center;
+  font-weight:600;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  padding:14px 8px;
+}
 
 .footer{display:flex; justify-content:center; padding:16px 0}
 

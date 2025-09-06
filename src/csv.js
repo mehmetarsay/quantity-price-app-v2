@@ -25,7 +25,15 @@ export function parseCSV(text){
     }
     row.push(cur);
     const [ad, adet, koli, grl, fiyat] = row;
-    out.push({ ad: ad||'', adet: adet||'', koli: koli||'1', grl: grl||'', fiyat: fiyat||'' });
+    
+    // Boş satırları filtrele - tüm alanlar boş veya sadece boşluk karakterleri ise
+    const isEmpty = [ad, adet, koli, grl, fiyat].every(field => 
+      !field || field.trim() === ''
+    );
+    
+    if (!isEmpty) {
+      out.push({ ad: ad||'', adet: adet||'', koli: koli||'1', grl: grl||'', fiyat: fiyat||'' });
+    }
   }
   return out;
 }

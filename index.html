@@ -10,6 +10,8 @@
   <header class="app-header" id="appHeader">
     <h1>Ürün Girişi</h1>
     <div class="totals">
+      <span>Ürün Sayısı:</span>
+      <strong id="productCount">0</strong>
       <span>Toplam:</span>
       <strong id="grandTotal">0</strong>
     </div>
@@ -30,6 +32,7 @@
 
     <div class="scroll-wrap" id="scrollWrap">
       <div class="table-head grid" id="tableHead">
+        <div>#</div>
         <div>AD</div>
         <div>Adet</div>
         <div>Koli</div>
@@ -49,6 +52,7 @@
 
   <template id="rowTemplate">
     <div class="row grid">
+      <div class="cell row-number"></div>
       <input class="cell name" data-field="ad" placeholder="Ürün adı" enterkeyhint="next" autocomplete="off" tabindex="0"/>
       <input class="cell num" data-field="adet" type="text" inputmode="text" placeholder="0" enterkeyhint="next" autocomplete="off" tabindex="0"/>
       <input class="cell num" data-field="koli" type="text" inputmode="text" placeholder="1" enterkeyhint="next" autocomplete="off" tabindex="0"/>
