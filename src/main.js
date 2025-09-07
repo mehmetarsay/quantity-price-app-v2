@@ -1,6 +1,6 @@
 import { toCSV, parseCSV } from './csv.js';
 import { save, load } from './state.js';
-import { addRow, addRowsBulk, clearAll, collectRows, updateGrandTotal, updateProductCount, updateRowNumbers, moveEmptyRowsToBottom } from './dom.js';
+import { addRow, addRowsBulk, clearAll, collectRows, updateGrandTotal, updateProductCount, updateRowNumbers, moveEmptyRowsToBottom, getInputs } from './dom.js';
 
 const addRowBtn = document.getElementById('addRowBtn');
 const add10Btn = document.getElementById('add10Btn');
@@ -35,9 +35,24 @@ updateStickyOffsets();
 addRowBtn.addEventListener('click', ()=> { addRow(); persist(); });
 addRowBottom.addEventListener('click', ()=> { addRow(); persist(); });
 add10Btn.addEventListener('click', ()=> { for(let i=0;i<10;i++) addRow(); persist(); });
-clearBtn.addEventListener('click', ()=> { clearAll(); persist(); });
+clearBtn.addEventListener('click', ()=> {
+  if(hasUserData()){
+    const ok = confirm('Mevcut veriler silinecek. Emin misiniz?');
+    if(!ok) return;
+  }
+  clearAll();
+  persist();
+});
 downloadBtn.addEventListener('click', ()=> downloadCSV());
 fileInput.addEventListener('change', importCSV);
+
+// Sayfadan ayrılırken/yenilerken veri varsa uyar
+window.addEventListener('beforeunload', (e)=>{
+  if(hasUserData()){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
 
 // Auto-save on changes
 const observer = new MutationObserver(()=> persist());
@@ -45,6 +60,20 @@ observer.observe(document.getElementById('rows'), { childList:true, subtree:true
 
 function persist(){
   save(collectRows());
+}
+
+function hasUserData(){
+  const rows = document.querySelectorAll('#rows .row');
+  for(const row of rows){
+    const i = getInputs(row);
+    const hasData = (i.ad?.value||'').trim() ||
+                    (i.adet?.value||'').trim() ||
+                    (i.koli?.value||'').trim() ||
+                    (i.grl?.value||'').trim() ||
+                    (i.fiyat?.value||'').trim();
+    if(hasData) return true;
+  }
+  return false;
 }
 
 function downloadCSV(){
