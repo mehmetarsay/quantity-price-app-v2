@@ -69,6 +69,54 @@ export function addRow(initial){
   }, 0);
 }
 
+// Birden fazla satırı tek seferde ve hızlı şekilde ekler
+export function addRowsBulk(initialRows){
+  if(!Array.isArray(initialRows) || initialRows.length === 0){
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+
+  initialRows.forEach((data)=>{
+    const node = tmpl.content.cloneNode(true);
+    const row = node.querySelector('.row');
+
+    row.addEventListener('input', (e)=> {
+      const f = e.target.dataset.field;
+      if(f === 'adet' || f === 'koli' || f === 'fiyat'){
+        updateRowTotal(row);
+        updateGrandTotal();
+      }
+    });
+
+    row.querySelector('.remove').addEventListener('click', ()=>{
+      row.remove();
+      updateGrandTotal();
+      updateProductCount();
+      moveEmptyRowsToBottom();
+    });
+
+    frag.appendChild(node);
+    const inserted = (frag.lastElementChild || rowsEl.lastElementChild);
+    attachKeyNav(inserted);
+    setInputs(inserted, data);
+    updateRowTotal(inserted);
+  });
+
+  rowsEl.appendChild(frag);
+  updateGrandTotal();
+  updateProductCount();
+  moveEmptyRowsToBottom();
+  updateRowNumbers();
+
+  // Sticky offsets güncelle
+  setTimeout(()=>{
+    if(window.updateStickyOffsets){
+      window.updateStickyOffsets();
+    }
+  }, 0);
+}
+
 export function clearAll(){
   rowsEl.innerHTML = '';
   updateGrandTotal();

@@ -1,6 +1,6 @@
 import { toCSV, parseCSV } from './csv.js';
 import { save, load } from './state.js';
-import { addRow, clearAll, collectRows, updateGrandTotal, updateProductCount, updateRowNumbers, moveEmptyRowsToBottom } from './dom.js';
+import { addRow, addRowsBulk, clearAll, collectRows, updateGrandTotal, updateProductCount, updateRowNumbers, moveEmptyRowsToBottom } from './dom.js';
 
 const addRowBtn = document.getElementById('addRowBtn');
 const add10Btn = document.getElementById('add10Btn');
@@ -77,13 +77,15 @@ async function importCSV(e){
   let currentFileIndex = 0;
   
   try {
-    // Önce tüm dosyaları oku ve toplam satır sayısını hesapla
-    const fileContents = [];
-    for(const file of files) {
+    // Tüm dosyaları sırayla oku; satırları topla
+    const allRows = [];
+    for(const file of files){
       const content = await readFileAsText(file);
       const rows = parseCSV(content);
-      fileContents.push({ file: file.name, rows });
+      currentFileName.textContent = file.name;
+      allRows.push(...rows);
       totalRows += rows.length;
+      fileCounter.textContent = `${files.indexOf(file)+1}/${files.length}`;
     }
     
     if(totalRows === 0) {
@@ -92,62 +94,24 @@ async function importCSV(e){
       return;
     }
     
-    // Progress güncelleme fonksiyonu
-    const updateProgress = (current, total, fileName, fileIndex) => {
-      const percentage = Math.round((current / total) * 100);
-      progressFillLarge.style.width = `${percentage}%`;
-      progressTextLarge.textContent = `${current}/${total} satır işlendi`;
-      currentFileName.textContent = fileName;
-      fileCounter.textContent = `${fileIndex + 1}/${files.length}`;
-    };
-    
-    // Satırları batch'ler halinde ekle (performans için)
-    const BATCH_SIZE = 50;
-    
-    for(const { file, rows } of fileContents) {
-      currentFileName.textContent = file;
-      fileCounter.textContent = `${currentFileIndex + 1}/${files.length}`;
-      
-      for(let i = 0; i < rows.length; i += BATCH_SIZE) {
-        const batch = rows.slice(i, i + BATCH_SIZE);
-        
-        // Batch'i ekle
-        batch.forEach(row => addRow(row));
-        processedRows += batch.length;
-        
-        // Progress güncelle
-        updateProgress(processedRows, totalRows, file, currentFileIndex);
-        
-        // UI'yi güncelle (her batch'ten sonra)
-        if(i + BATCH_SIZE >= rows.length) {
-          // Son batch - tüm güncellemeleri yap
-          moveEmptyRowsToBottom();
-          updateGrandTotal();
-          updateProductCount();
-          updateStickyOffsets();
-        } else {
-          // Ara batch'ler - sadece temel güncellemeler
-          updateGrandTotal();
-          updateProductCount();
-        }
-        
-        // UI'yi bloke etmemek için kısa bir bekleme
-        await new Promise(resolve => setTimeout(resolve, 1));
-      }
-      
-      currentFileIndex++;
-    }
+    // Tek seferde hızlı ekle
+    progressTextLarge.textContent = 'Satırlar ekleniyor...';
+    addRowsBulk(allRows);
+    processedRows = totalRows;
+    const percentage = Math.round((processedRows / totalRows) * 100);
+    progressFillLarge.style.width = `${percentage}%`;
+    progressTextLarge.textContent = `${processedRows}/${totalRows} satır eklendi`;
     
     // Final güncellemeler
     persist();
     progressTextLarge.textContent = `${totalRows} satır başarıyla içe aktarıldı!`;
     currentFileName.textContent = 'Tamamlandı!';
     
-    // 2 saniye sonra loading'i gizle
+    // 1 saniye sonra loading'i gizle
     setTimeout(() => {
       loadingOverlay.style.display = 'none';
       progressFillLarge.style.width = '0%';
-    }, 2000);
+    }, 1000);
     
   } catch(err) {
     console.error(err);
